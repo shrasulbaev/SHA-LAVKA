@@ -1,16 +1,15 @@
-import os #ищет файлы внутри системных файлов
 from pathlib import Path
-
+from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-gp4ioqi6a874k=r=@2xb8u+(d&e8zr@7q&=)fu0fo%1w+w6fhq'
+SECRET_KEY = config('SECRET_KEY')
 
-DEBUG = True
+DEBUG = config('DEBUG')
 
 ALLOWED_HOSTS = []
 
-# Application definition
+AUTH_USER_MODEL = 'account.User'
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -19,19 +18,20 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #Добавление скаченных библиотек
+
     'rest_framework',
     'drf_yasg',
-    'corsheaders',
-    #добавление приложений
-    'account',
-    'shashop'
+    'rest_framework.authtoken',
+    'django_filters',
+
+    'shashop',
+    'account'
+
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -58,6 +58,18 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'config.wsgi.application'
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': config('NAME'),
+#         'USER': config('USER'),
+#         'PASSWORD': config('PASSWORD'),
+#         'PORT': 5432,
+#         'HOST': 'localhost'
+#     }
+# }
 
 DATABASES = {
     'default': {
@@ -89,14 +101,24 @@ USE_I18N = True
 
 USE_TZ = True
 
-MEDIA_URL = '/media/' #Папка для сохранения файлов
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\', '/')
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 5,
+    # 'DEFAULT_AUTHENTICATION_CLASSES': [
+    #     'rest_framework.authentication.SessionAuthentication',
+    #     'rest_framework.authentication.BasicAuthentication'
+    # ]
+}
 
-STATIC_URL = '/static/'
-
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'account.User'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD =config('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True

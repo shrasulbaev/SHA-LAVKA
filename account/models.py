@@ -66,4 +66,3 @@ class User(AbstractBaseUser):
     def str(self):
         return f"{self.email}" or f"{self.phone_number}"
 
-
